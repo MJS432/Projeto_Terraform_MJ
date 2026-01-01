@@ -12,3 +12,18 @@ variable "region" {
   description = "Deploy region"
   type        = string
 }
+
+variable "sql_database" {
+  description = "Database name"
+  type        = string
+}
+
+variable "sql_user" {
+  description = "Database user"
+  type        = string
+}
+
+variable "sql_password" {
+  description = "Database password"
+  type        = string
+}

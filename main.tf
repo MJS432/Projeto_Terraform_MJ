@@ -9,3 +9,14 @@ module "network" {
   source        = "./modules/network"
   mig_instance_group = module.compute_engine.mig_instance_group
 }
+module "sql" {
+  source = "./modules/cloud_sql"
+  sql_database = var.sql_database
+  sql_password = var.sql_password
+  sql_user = var.sql_user
+  network_name = module.network.network_name
+}
+
+module "buckets" {
+  source = "./modules/buckets"
+}

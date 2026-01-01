@@ -20,3 +20,17 @@ resource "google_project_iam_member" "terraform_instance_admin" {
   role    = "roles/compute.instanceAdmin.v1"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
+
+# Cloud Storage Admin
+resource "google_project_iam_member" "terraform_storage_admin" {
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+# Cloud SQL Admin
+resource "google_project_iam_member" "terraform_sql_admin" {
+  project = var.project_id
+  role    = "roles/cloudsql.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
