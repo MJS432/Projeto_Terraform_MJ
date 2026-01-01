@@ -3,10 +3,6 @@ resource "google_compute_network" "this" {
   auto_create_subnetworks = false
 }
 
-output "network_name" {
-  value = google_compute_network.this.name
-}
-
 resource "google_compute_subnetwork" "this" {
   name                     = "subnetwork"
   network                  = google_compute_network.this.id
@@ -81,4 +77,29 @@ resource "google_compute_firewall" "deny-all" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+}
+
+#Reservar IP Público
+resource "google_compute_address" "vm1-ip-address" {
+  name = "vm1-ipv4-address"
+  region = "europe-west1"
+}
+
+resource "google_compute_firewall" "default-allow-ssh-icmp" {
+  name      = "default-allow-ssh-icmp"
+  network   = google_compute_network.this.name
+  priority  = 2000
+  direction = "INGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["https-server"]
 }
