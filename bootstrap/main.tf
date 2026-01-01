@@ -34,3 +34,21 @@ resource "google_project_iam_member" "terraform_sql_admin" {
   role    = "roles/cloudsql.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
+
+resource "google_project_iam_member" "terraform_container_admin" {
+  project = var.project_id
+  role    = "roles/container.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_service_account_user" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_artifact_registry_admin" {
+  project = var.project_id
+  role    = "roles/artifactregistry.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
