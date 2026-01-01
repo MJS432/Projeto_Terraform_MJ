@@ -103,3 +103,144 @@ resource "google_compute_firewall" "default-allow-ssh-icmp" {
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["https-server"]
 }
+
+resource "google_compute_router" "nat-router" {
+  name    = "nat-router"
+  region  = "europe-west1"
+  network = google_compute_network.this.name
+}
+
+resource "google_compute_router_nat" "nat-config" {
+  name                               = "nat-config"
+  router                             = google_compute_router.nat-router.name
+  region                             = "europe-west1"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
+  }
+}
+
+resource "google_compute_security_policy" "multi_policy" {
+  name = "multi-policy"
+
+  rule {
+    action   = "deny(403)"
+    priority = 1000
+    match {
+      expr {
+        expression = "!(origin.region_code == 'PT' || origin.region_code == 'ES')"
+      }
+    }
+    description = "Bloquear tráfego fora de PT e ES"
+  }
+
+  rule {
+    action   = "throttle"
+    priority = 1200
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+
+    rate_limit_options {
+      rate_limit_threshold {
+        count        = 20
+        interval_sec = 60
+      }
+
+      conform_action = "allow"
+      exceed_action  = "deny(429)"
+      enforce_on_key = "IP"
+    }
+
+    description = "Limitar 20 req/min por IP"
+  }
+
+  rule {
+    action   = "allow"
+    priority = 2147483647
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+  }
+}
+
+resource "google_compute_global_address" "load_balancer_ip" {
+  name = "load-balancer-ip"
+}
+
+resource "google_compute_health_check" "default" {
+  name               = "http-health-check"
+  check_interval_sec = 5
+  timeout_sec        = 5
+  healthy_threshold  = 2
+  unhealthy_threshold = 2
+
+  http_health_check {
+    port = 80
+    request_path = "/"
+  }
+}
+
+resource "google_compute_managed_ssl_certificate" "default" {
+  name = "managed-cert"
+
+  managed {
+    domains = ["deusnosajude.pt"]
+  }
+}
+
+resource "google_compute_backend_service" "default" {
+  name                  = "backend-service"
+  protocol              = "HTTP"
+  port_name             = "http"
+  timeout_sec           = 10
+  load_balancing_scheme = "EXTERNAL"
+
+  backend {
+    group = var.mig_instance_group
+  }
+
+  health_checks  = [google_compute_health_check.default.id]
+  security_policy = google_compute_security_policy.multi_policy.id
+}
+
+resource "google_compute_url_map" "default" {
+  name            = "url-map"
+  default_service = google_compute_backend_service.default.id
+}
+
+# HTTP
+resource "google_compute_target_http_proxy" "default" {
+  name    = "http-proxy"
+  url_map = google_compute_url_map.default.id
+}
+
+# HTTPS
+resource "google_compute_target_https_proxy" "default" {
+  name    = "https-proxy"
+  url_map = google_compute_url_map.default.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
+}
+
+resource "google_compute_global_forwarding_rule" "default" {
+  name       = "http-forwarding-rule"
+  ip_address = google_compute_global_address.load_balancer_ip.address
+  port_range = "80"
+  target     = google_compute_target_http_proxy.default.id
+}
+
+resource "google_compute_global_forwarding_rule" "https" {
+  name       = "https-forwarding-rule"
+  ip_address = google_compute_global_address.load_balancer_ip.address
+  port_range = "443"
+  target     = google_compute_target_https_proxy.default.id
+}
