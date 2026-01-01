@@ -53,6 +53,30 @@ resource "google_project_iam_member" "terraform_artifact_registry_admin" {
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+resource "google_project_iam_member" "terraform_service_account_admin" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountAdmin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_pubsub_admin" {
+  project = var.project_id
+  role    = "roles/pubsub.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_secret_manager_secret_admin" {
+  project = var.project_id
+  role    = "roles/secretmanager.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_redis_admin" {
+  project = var.project_id
+  role    = "roles/redis.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
 resource "google_project_iam_member" "terraform_run_admin" {
   project = var.project_id
   role    = "roles/run.admin"

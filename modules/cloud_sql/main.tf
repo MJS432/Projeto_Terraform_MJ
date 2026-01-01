@@ -3,10 +3,13 @@ resource "google_sql_database_instance" "this" {
   database_version = "POSTGRES_17"
   region           = "europe-west1"
 
-deletion_protection = false
+  deletion_protection = false
 
   settings {
     tier = "db-f1-micro"
+    
+    disk_size       = 10
+    disk_type       = "PD_HDD"
 
     ip_configuration {
       ipv4_enabled    = true

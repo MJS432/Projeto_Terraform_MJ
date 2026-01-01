@@ -4,12 +4,21 @@ resource "google_compute_network" "this" {
 }
 
 resource "google_compute_subnetwork" "this" {
-  name                     = "subnetwork"
-  network                  = google_compute_network.this.id
-  ip_cidr_range            = "10.0.1.0/24"
-  region                   = "europe-west1"
-}
+  name          = "subnetwork"
+  network       = google_compute_network.this.id
+  ip_cidr_range = "10.0.1.0/24"
+  region        = "europe-west1"
 
+  secondary_ip_range {
+    range_name    = "pods"
+    ip_cidr_range = "10.1.0.0/16"
+  }
+
+  secondary_ip_range {
+    range_name    = "services"
+    ip_cidr_range = "10.2.0.0/16"
+  }
+}
 
 #Permitir HTTP
 resource "google_compute_firewall" "default-allow-http" {

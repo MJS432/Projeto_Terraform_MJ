@@ -23,9 +23,13 @@ module "buckets" {
 }
 
 module "kubernetes" {
-  source          = "./modules/kubernetes"
-  network_name    = module.network.network_name
-  subnetwork_name = module.network.subnetwork_name
+  source     = "./modules/kubernetes"
+  project_id = var.project_id
+
+  network_id                     = module.network.network_id
+  subnet_id                      = module.network.subnet_id
+  pods_secondary_range_name      = module.network.pods_secondary_range_name
+  services_secondary_range_name  = module.network.services_secondary_range_name
 }
 
 module "registry" {
