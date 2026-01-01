@@ -1,6 +1,6 @@
 resource "google_container_cluster" "primary" {
   name     = "step-by-step-cluster-lusohub"
-  location = "europe-west1"
+  location = "europe-west1-b"
   network  = var.network_id
   subnetwork = var.subnet_id
 
@@ -24,19 +24,19 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "lusohub_nodes" {
   name               = "lusohub-node-pool"
-  location           = "europe-west1"
+  location           = "europe-west1-b"
   cluster            = google_container_cluster.primary.name
   initial_node_count = 1
 
   autoscaling {
     min_node_count = 1
-    max_node_count = 3
+    max_node_count = 2
   }
 
   node_config {
     preemptible  = true
-    machine_type = "e2-medium"
-    disk_size_gb = 50
+    machine_type = "e2-small"
+    disk_size_gb = 20
     disk_type    = "pd-standard"
 
     workload_metadata_config {

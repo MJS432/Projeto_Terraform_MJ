@@ -75,7 +75,7 @@ resource "google_compute_instance_group_manager" "default" {
     instance_template = google_compute_instance_template.default.id
   }
 
-  target_size = 3
+  target_size = 2
 
   update_policy {
     type                    = "PROACTIVE"
