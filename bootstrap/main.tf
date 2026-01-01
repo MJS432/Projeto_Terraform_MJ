@@ -52,3 +52,15 @@ resource "google_project_iam_member" "terraform_artifact_registry_admin" {
   role    = "roles/artifactregistry.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
+
+resource "google_project_iam_member" "terraform_run_admin" {
+  project = var.project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
+
+resource "google_project_iam_member" "terraform_cloud_functions_admin" {
+  project = var.project_id
+  role    = "roles/cloudfunctions.admin"
+  member  = "serviceAccount:${local.terraform_sa_email}"
+}
