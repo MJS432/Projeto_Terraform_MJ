@@ -1,5 +1,5 @@
 resource "google_container_cluster" "primary" {
-  name     = "step-by-step-cluster-lusohub"
+  name     = "projeto-cluster-lusohub"
   location = "europe-west1-b"
   network  = var.network_id
   subnetwork = var.subnet_id
