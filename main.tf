@@ -35,3 +35,12 @@ module "kubernetes" {
 module "registry" {
   source        = "./modules/registry"
 }
+
+module "pubsub" {
+  source = "./modules/pubsub"
+}
+
+module "redis" {
+  source  = "./modules/redis"
+  network = module.network.network_id
+}
