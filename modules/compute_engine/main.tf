@@ -41,6 +41,7 @@ resource "google_compute_instance" "vm2-instance" {
   tags = ["https-server"]
 }
 
+#Managed Instance Group
 resource "google_compute_instance_template" "default" {
   name         = "vm-template-server"
   machine_type = "e2-micro"
@@ -66,6 +67,7 @@ resource "google_compute_instance_template" "default" {
   EOT
 }
 
+#Group Manager
 resource "google_compute_instance_group_manager" "default" {
   name               = "vm-group"
   base_instance_name = "mig-vm"
@@ -75,7 +77,7 @@ resource "google_compute_instance_group_manager" "default" {
     instance_template = google_compute_instance_template.default.id
   }
 
-  target_size = 2
+  target_size = 3
 
   update_policy {
     type                    = "PROACTIVE"

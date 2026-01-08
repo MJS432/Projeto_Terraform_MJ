@@ -132,6 +132,7 @@ resource "google_compute_router_nat" "nat-config" {
   }
 }
 
+#Cloud Armor
 resource "google_compute_security_policy" "multi_policy" {
   name = "multi-policy"
 
@@ -182,10 +183,13 @@ resource "google_compute_security_policy" "multi_policy" {
   }
 }
 
+#Reservar IP
 resource "google_compute_global_address" "load_balancer_ip" {
   name = "load-balancer-ip"
 }
 
+
+#Health Check
 resource "google_compute_health_check" "default" {
   name               = "http-health-check"
   check_interval_sec = 5
@@ -199,6 +203,7 @@ resource "google_compute_health_check" "default" {
   }
 }
 
+#Certificado SSL
 resource "google_compute_managed_ssl_certificate" "default" {
   name = "managed-cert"
 
