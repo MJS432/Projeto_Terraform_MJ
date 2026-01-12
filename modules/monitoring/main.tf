@@ -64,6 +64,34 @@ resource "google_monitoring_alert_policy" "instance_down" {
   }
 }
 
+# Alert Policy - Network Traffic Incoming
+resource "google_monitoring_alert_policy" "network_received" {
+  display_name = "VM Network Traffic Received Alert"
+  combiner     = "OR"
+  
+  conditions {
+    display_name = "Incoming network traffic detected"
+    
+    condition_threshold {
+      filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/network/received_bytes_count\""
+      duration        = "0s"
+      comparison      = "COMPARISON_GT"
+      threshold_value = 1000
+      
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+  
+  notification_channels = [google_monitoring_notification_channel.email.id]
+  
+  alert_strategy {
+    auto_close = "1800s"
+  }
+}
+
 # Uptime Check - HTTP endpoint
 resource "google_monitoring_uptime_check_config" "http_check" {
   display_name = "HTTP Uptime Check"
