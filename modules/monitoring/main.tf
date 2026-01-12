@@ -8,19 +8,19 @@ resource "google_monitoring_notification_channel" "email" {
   }
 }
 
-# Alert Policy - VM CPU Usage
-resource "google_monitoring_alert_policy" "vm_cpu_low" {
-  display_name = "VM CPU Usage Alert"
+# Alert Policy - High CPU Usage
+resource "google_monitoring_alert_policy" "high_cpu" {
+  display_name = "High CPU Usage Alert"
   combiner     = "OR"
   
   conditions {
-    display_name = "VM CPU usage detected"
+    display_name = "CPU usage above 80%"
     
     condition_threshold {
       filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/cpu/utilization\""
-      duration        = "0s"
+      duration        = "300s"
       comparison      = "COMPARISON_GT"
-      threshold_value = 0.01
+      threshold_value = 0.8
       
       aggregations {
         alignment_period   = "60s"
@@ -32,22 +32,22 @@ resource "google_monitoring_alert_policy" "vm_cpu_low" {
   notification_channels = [google_monitoring_notification_channel.email.id]
   
   alert_strategy {
-    auto_close = "300s"
+    auto_close = "1800s"
   }
 }
 
-# Alert Policy - Disk Read Operations
-resource "google_monitoring_alert_policy" "disk_ops" {
-  display_name = "VM Disk Operations Alert"
+# Alert Policy - VM Instance Down
+resource "google_monitoring_alert_policy" "instance_down" {
+  display_name = "VM Instance Down Alert"
   combiner     = "OR"
   
   conditions {
-    display_name = "Disk read operations detected"
+    display_name = "VM Instance is down"
     
     condition_threshold {
-      filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/disk/read_ops_count\""
-      duration        = "0s"
-      comparison      = "COMPARISON_GT"
+      filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/uptime\""
+      duration        = "60s"
+      comparison      = "COMPARISON_LT"
       threshold_value = 1
       
       aggregations {
@@ -60,34 +60,27 @@ resource "google_monitoring_alert_policy" "disk_ops" {
   notification_channels = [google_monitoring_notification_channel.email.id]
   
   alert_strategy {
-    auto_close = "300s"
+    auto_close = "1800s"
   }
 }
 
-# Alert Policy - Network Bytes Sent
-resource "google_monitoring_alert_policy" "network_sent" {
-  display_name = "VM Network Bytes Sent Alert"
-  combiner     = "OR"
+# Uptime Check - HTTP endpoint
+resource "google_monitoring_uptime_check_config" "http_check" {
+  display_name = "HTTP Uptime Check"
+  timeout      = "10s"
+  period       = "60s"
   
-  conditions {
-    display_name = "Network bytes sent detected"
-    
-    condition_threshold {
-      filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/network/sent_bytes_count\""
-      duration        = "0s"
-      comparison      = "COMPARISON_GT"
-      threshold_value = 100
-      
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_RATE"
-      }
-    }
+  http_check {
+    path         = "/"
+    port         = "80"
+    request_method = "GET"
   }
   
-  notification_channels = [google_monitoring_notification_channel.email.id]
-  
-  alert_strategy {
-    auto_close = "300s"
+  monitored_resource {
+    type = "uptime_url"
+    labels = {
+      project_id = var.project_id
+      host       = var.monitored_host
+    }
   }
 }
