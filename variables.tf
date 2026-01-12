@@ -27,3 +27,14 @@ variable "sql_password" {
   description = "Database password"
   type        = string
 }
+
+variable "notification_email" {
+  description = "Email for monitoring notifications"
+  type        = string
+}
+
+variable "monitored_host" {
+  description = "Host to monitor"
+  type        = string
+  default     = "example.com"
+}

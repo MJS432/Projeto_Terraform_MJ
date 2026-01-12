@@ -44,3 +44,9 @@ module "redis" {
   source  = "./modules/redis"
   network = module.network.network_id
 }
+
+module "monitoring" {
+  source              = "./modules/monitoring"
+  project_id          = var.project_id
+  notification_email  = var.notification_email
+}
