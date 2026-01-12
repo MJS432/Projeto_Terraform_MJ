@@ -20,7 +20,7 @@ resource "google_monitoring_alert_policy" "instance_down" {
       filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/uptime\""
       duration        = "60s"
       comparison      = "COMPARISON_LT"
-      threshold_value = 1
+      threshold_value = 0.5
       
       aggregations {
         alignment_period   = "60s"
@@ -42,13 +42,13 @@ resource "google_monitoring_alert_policy" "high_cpu" {
   combiner     = "OR"
   
   conditions {
-    display_name = "CPU usage above 80%"
+    display_name = "CPU usage above 10%"
     
     condition_threshold {
       filter          = "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/cpu/utilization\""
-      duration        = "300s"
+      duration        = "60s"
       comparison      = "COMPARISON_GT"
-      threshold_value = 0.8
+      threshold_value = 0.10
       
       aggregations {
         alignment_period   = "60s"
@@ -67,7 +67,7 @@ resource "google_monitoring_alert_policy" "high_cpu" {
 # Uptime Check - HTTP endpoint
 resource "google_monitoring_uptime_check_config" "http_check" {
   display_name = "HTTP Uptime Check"
-  timeout      = "10s"
+  timeout      = "5s"
   period       = "60s"
   
   http_check {
