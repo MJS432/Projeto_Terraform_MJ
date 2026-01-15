@@ -21,6 +21,7 @@ resource "google_project_iam_member" "terraform_instance_admin" {
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#-----------------------------------------------------------------------
 # Cloud Storage Admin
 resource "google_project_iam_member" "terraform_storage_admin" {
   project = var.project_id
@@ -35,60 +36,75 @@ resource "google_project_iam_member" "terraform_sql_admin" {
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#-----------------------------------------------------------------------
+
+# Kubernetes Admin
 resource "google_project_iam_member" "terraform_container_admin" {
   project = var.project_id
   role    = "roles/container.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Service Account User
 resource "google_project_iam_member" "terraform_service_account_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Artifact Registry Admin
 resource "google_project_iam_member" "terraform_artifact_registry_admin" {
   project = var.project_id
   role    = "roles/artifactregistry.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#--------------------------------------------------------------
+# Service Account Admin
 resource "google_project_iam_member" "terraform_service_account_admin" {
   project = var.project_id
   role    = "roles/iam.serviceAccountAdmin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Pub/Sub Admin
 resource "google_project_iam_member" "terraform_pubsub_admin" {
   project = var.project_id
   role    = "roles/pubsub.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Secret Manager Admin
 resource "google_project_iam_member" "terraform_secret_manager_secret_admin" {
   project = var.project_id
   role    = "roles/secretmanager.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Redis Admin
 resource "google_project_iam_member" "terraform_redis_admin" {
   project = var.project_id
   role    = "roles/redis.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#--------------------------------------------------------------
+# Cloud Run Admin
 resource "google_project_iam_member" "terraform_run_admin" {
   project = var.project_id
   role    = "roles/run.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+# Cloud Functions Admin
 resource "google_project_iam_member" "terraform_cloud_functions_admin" {
   project = var.project_id
   role    = "roles/cloudfunctions.admin"
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#--------------------------------------------------------------
+# Monitoring Admin
 resource "google_project_iam_member" "terraform_monitoring_admin" {
   project = var.project_id
   role    = "roles/monitoring.admin"

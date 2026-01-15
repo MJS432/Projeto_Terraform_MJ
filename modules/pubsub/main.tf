@@ -1,6 +1,7 @@
+# First Pub/Sub 
 resource "google_pubsub_topic" "events_topic" {
   name                       = "events-topic"
-  message_retention_duration = "86600s" # 24 hours
+  message_retention_duration = "86600s" 
 }
 
 resource "google_pubsub_topic" "events_topic_dead_letter" {
@@ -12,7 +13,7 @@ resource "google_pubsub_subscription" "events_subscription" {
   topic = google_pubsub_topic.events_topic.id
 
   expiration_policy {
-    ttl = "" # Never
+    ttl = "" 
   }
 
   ack_deadline_seconds         = 30
@@ -32,7 +33,7 @@ resource "google_pubsub_subscription" "events_subscription" {
 # Second Pub/Sub 
 resource "google_pubsub_topic" "data_topic" {
   name                       = "data-topic"
-  message_retention_duration = "86600s" # 24 hours
+  message_retention_duration = "86600s" 
 }
 
 resource "google_pubsub_topic" "data_topic_dead_letter" {

@@ -13,6 +13,7 @@ variable "region" {
   type        = string
 }
 
+# sql variables
 variable "sql_database" {
   description = "Database name"
   type        = string
@@ -28,6 +29,7 @@ variable "sql_password" {
   type        = string
 }
 
+# monitoring variables
 variable "notification_email" {
   description = "Email for monitoring notifications"
   type        = string

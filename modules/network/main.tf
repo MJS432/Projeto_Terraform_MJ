@@ -1,8 +1,10 @@
+#Network VPC 
 resource "google_compute_network" "this" {
   name                    = "custom-vpc"
   auto_create_subnetworks = false
 }
 
+#subnet
 resource "google_compute_subnetwork" "this" {
   name          = "subnetwork"
   network       = google_compute_network.this.id
@@ -88,12 +90,15 @@ resource "google_compute_firewall" "deny-all" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+#--------------------------------------------------------------------------
+#VM1
 #Reservar IP Público
 resource "google_compute_address" "vm1-ip-address" {
   name = "vm1-ipv4-address"
   region = "europe-west1"
 }
 
+#Ping e SSH
 resource "google_compute_firewall" "default-allow-ssh-icmp" {
   name      = "default-allow-ssh-icmp"
   network   = google_compute_network.this.name
@@ -113,6 +118,9 @@ resource "google_compute_firewall" "default-allow-ssh-icmp" {
   target_tags   = ["https-server"]
 }
 
+#--------------------------------------------------------------------------
+#VM2
+#NAT Gateway
 resource "google_compute_router" "nat-router" {
   name    = "nat-router"
   region  = "europe-west1"
@@ -131,6 +139,9 @@ resource "google_compute_router_nat" "nat-config" {
     filter = "ERRORS_ONLY"
   }
 }
+#--------------------------------------------------------------------------
+
+#MANAGED INSTANCE GROUP 
 
 #Cloud Armor
 resource "google_compute_security_policy" "multi_policy" {
@@ -147,6 +158,7 @@ resource "google_compute_security_policy" "multi_policy" {
     description = "Bloquear tráfego fora de PT e ES"
   }
 
+# FIRST RULE
   rule {
     action   = "throttle"
     priority = 1200
@@ -171,6 +183,7 @@ resource "google_compute_security_policy" "multi_policy" {
     description = "Limitar 20 req/min por IP"
   }
 
+#SECOND  RULE
   rule {
     action   = "allow"
     priority = 2147483647
@@ -212,6 +225,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   }
 }
 
+#Backend Service
 resource "google_compute_backend_service" "default" {
   name                  = "backend-service"
   protocol              = "HTTP"
@@ -227,6 +241,7 @@ resource "google_compute_backend_service" "default" {
   security_policy = google_compute_security_policy.multi_policy.id
 }
 
+# URL Map
 resource "google_compute_url_map" "default" {
   name            = "url-map"
   default_service = google_compute_backend_service.default.id
@@ -245,6 +260,7 @@ resource "google_compute_target_https_proxy" "default" {
   ssl_certificates = [google_compute_managed_ssl_certificate.default.id]
 }
 
+# Forwarding Rule
 resource "google_compute_global_forwarding_rule" "default" {
   name       = "http-forwarding-rule"
   ip_address = google_compute_global_address.load_balancer_ip.address

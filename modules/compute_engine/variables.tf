@@ -1,3 +1,4 @@
+#VM 1
 variable "vm1_ip" {
   description = "Static IP for VM1"
   type        = string

@@ -1,3 +1,4 @@
+#Máquina Virtual 1 
 resource "google_compute_instance" "vm1-instance" {
   name                      = "vm1-instance"
   machine_type              = "e2-medium"
@@ -21,7 +22,9 @@ resource "google_compute_instance" "vm1-instance" {
   
   tags = ["https-server"]
 }
+#--------------------------------------------------------------------------
 
+#máquina Virtual 2
 resource "google_compute_instance" "vm2-instance" {
   name                      = "vm2-instance"
   machine_type              = "e2-medium"
@@ -40,6 +43,7 @@ resource "google_compute_instance" "vm2-instance" {
   
   tags = ["https-server"]
 }
+#--------------------------------------------------------------------------
 
 #Managed Instance Group
 resource "google_compute_instance_template" "default" {
@@ -66,6 +70,7 @@ resource "google_compute_instance_template" "default" {
     echo "Hello from MIG instance $(hostname)" > /var/www/html/index.html
   EOT
 }
+#--------------------------------------------------------------------------
 
 #Group Manager
 resource "google_compute_instance_group_manager" "default" {
@@ -95,3 +100,4 @@ resource "google_compute_instance_group_manager" "default" {
     port = 80
   }
 }
+#--------------------------------------------------------------------------

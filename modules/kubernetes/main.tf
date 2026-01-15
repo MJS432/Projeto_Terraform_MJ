@@ -17,6 +17,7 @@ resource "google_container_cluster" "primary" {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
 
+# Enable the Gateway API
   gateway_api_config {
     channel = "CHANNEL_STANDARD"
   }
@@ -52,6 +53,8 @@ resource "google_container_node_pool" "lusohub_nodes" {
   }
 }
 
+#--------------------------------------------------------------------------
+# Workload Identity Bindings
 resource "google_service_account_iam_member" "workload_identity_binding" {
   service_account_id = "projects/${var.project_id}/serviceAccounts/terraform-sa@${var.project_id}.iam.gserviceaccount.com"
   role               = "roles/iam.workloadIdentityUser"

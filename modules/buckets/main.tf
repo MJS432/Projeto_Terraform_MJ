@@ -9,6 +9,7 @@ resource "google_storage_bucket" "my_bucket" {
     enabled = true
   }
 
+# FIRST RULE:
   lifecycle_rule {
     action {
       type = "Delete"
@@ -18,9 +19,7 @@ resource "google_storage_bucket" "my_bucket" {
     }
   }
   
-#Esta nova regra irá:
-#Transicionar objetos para a classe de armazenamento NEARLINE após 7 dias
-#A regra existente continua a deletar objetos após 30 dias
+# SECOND RULE:
   lifecycle_rule {
     action {
       type          = "SetStorageClass"
