@@ -15,6 +15,8 @@ resource "google_project_iam_member" "terraform_security_admin" {
   member  = "serviceAccount:${local.terraform_sa_email}"
 }
 
+#-----------------------------------------------------------------------
+# Compute Instance Admin
 resource "google_project_iam_member" "terraform_instance_admin" {
   project = var.project_id
   role    = "roles/compute.instanceAdmin.v1"
