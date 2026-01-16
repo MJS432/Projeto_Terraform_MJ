@@ -1,6 +1,6 @@
 resource "google_sql_database_instance" "this" {
   name             = "my-sql-instance"
-  database_version = "POSTGRES_17"
+  database_version = "POSTGRES_15"
   region           = "europe-west1"
 
   deletion_protection = false
