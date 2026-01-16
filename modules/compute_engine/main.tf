@@ -70,7 +70,6 @@ resource "google_compute_instance_template" "default" {
     echo "Hello from MIG instance $(hostname)" > /var/www/html/index.html
   EOT
 }
-#--------------------------------------------------------------------------
 
 #Group Manager
 resource "google_compute_instance_group_manager" "default" {
