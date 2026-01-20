@@ -6,5 +6,5 @@ sql_database      = "exemplo-db"
 sql_user          = "mega-user-123"
 sql_password      = "mega-super-password-qwerty-123"
 
-notification_email = "mariajoao432@gmail.com"
+notification_email = "mariajoao@gmail.com"
 
